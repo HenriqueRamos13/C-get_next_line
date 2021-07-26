@@ -32,6 +32,13 @@ char	*ft_last_saved_value(char **save)
 	return (tmp);
 }
 
+char	*last_step(char **save, int fd)
+{
+	if (ft_strchrp(*save, '\n') >= 0)
+		return (ft_find_nl(&(*save)));
+	return (get_next_line(fd));
+}
+
 char	*get_next_line(int fd)
 {
 	char		buff[BUFFER_SIZE + 1];
@@ -39,9 +46,9 @@ char	*get_next_line(int fd)
 	char		*tmp;
 	int			r;
 
-	if (BUFFER_SIZE < 1 || fd < 0)
-		return (NULL);
 	r = read(fd, buff, BUFFER_SIZE);
+	if (BUFFER_SIZE < 1 || fd < 0 || r == -1)
+		return (NULL);
 	buff[r] = '\0';
 	if (r < 1)
 	{
@@ -57,8 +64,5 @@ char	*get_next_line(int fd)
 		save = ft_strjoin(tmp, buff);
 		free(tmp);
 	}
-	if (ft_strchrp(save, '\n') >= 0)
-		return (ft_find_nl(&(save)));
-	return (get_next_line(fd));
+	return (last_step(&(save), fd));
 }
-
